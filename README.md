@@ -16,6 +16,7 @@ It removes the complexity of manual shader setup and allows quick application or
 
 ## Features
 
+- B button now functions as back button
 - Apply or remove shaders per system or globally
 - Modern shader pipeline focused on clean scaling and clarity
 - Scale2x upscaling with sharp bilinear filtering
