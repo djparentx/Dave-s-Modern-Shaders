@@ -1,6 +1,6 @@
 # Dave's Modern Shaders (R36S)
 
-by djparent
+v1.1 by djparent
 
 A RetroArch shader management tool for the R36S, designed for ArkOS and dArkOS, providing a clean, controller-friendly way to apply modern shader presets with improved scaling, smoothing, and color output.
 
