@@ -1083,7 +1083,7 @@ CleanupKeys() {
 # Gamepad Setup
 # =======================================================
 export SDL_GAMECONTROLLERCONFIG_FILE="/opt/inttools/gamecontrollerdb.txt"
-sudo chmod 666 /dev/uinput
+chmod 666 /dev/uinput
 cp /opt/inttools/keys.gptk "$TMP_KEYS"
 sed -i 's/^x = .*/x = space/' "$TMP_KEYS"
 sed -i 's/^y = .*/y = space/' "$TMP_KEYS"
@@ -1098,7 +1098,7 @@ start_gptkeyb
 # =======================================================
 printf "\033[H\033[2J" > "$CURR_TTY"
 dialog --clear
-trap 'StopGPTKeyb; CleanupKeys' exit_menu EXIT
+trap 'stop_gptkeyb; CleanupKeys; exit_menu' EXIT
 
 [[ ! -f "/home/ark/.config/retroarch/overlay/gb-4k.png" ]] && create_files
 
