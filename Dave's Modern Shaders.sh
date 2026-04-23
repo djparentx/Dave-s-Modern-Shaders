@@ -39,6 +39,7 @@ export TERM=linux
 GPTOKEYB_PID=""
 CURR_TTY="/dev/tty1"
 TMP_KEYS="/tmp/keys.gptk.$$"
+FLAG="/var/cache/.modern_shaders"
 SHADERPATH="/home/ark/.config/retroarch/shaders"
 CONFIGPATH="/home/ark/.config/retroarch/config"
 CONFIG32PATH="/home/ark/.config/retroarch32/config"
@@ -1068,7 +1069,7 @@ srgb_framebuffer3 = "false"
 EOF
 
 chown -R ark:ark $SHADERPATH
-
+touch "$FLAG"
 sleep 2
 }
 
@@ -1100,7 +1101,7 @@ printf "\033[H\033[2J" > "$CURR_TTY"
 dialog --clear
 trap 'stop_gptkeyb; CleanupKeys; exit_menu' EXIT
 
-[[ ! -f "/home/ark/.config/retroarch/overlay/gb-4k.png" ]] && create_files
+[[ ! -f "$FLAG" ]] && create_files
 
 main_menu
 
