@@ -26,6 +26,7 @@ It removes the complexity of manual shader setup and allows quick application or
 - Multi-language support (EN, FR, ES, PT, IT, DE, PL)
 - Automatic shader installation on first run
 - Fully controller-driven interface (X / Y toggles)
+- Delete flag file at /home/ark/.modern_shaders to reinstall files
 
 ---
 
