@@ -22,6 +22,7 @@ It removes the complexity of manual shader setup and allows quick application or
 - Scale2x upscaling with sharp bilinear filtering
 - Optional NTSC color processing for console systems
 - Custom Game Boy Advance color correction shader
+- Sets RetroArch Aspect Ratio to Core Provided
 - Lightweight shaders optimized for R36S performance
 - Multi-language support (EN, FR, ES, PT, IT, DE, PL)
 - Automatic shader installation on first run
