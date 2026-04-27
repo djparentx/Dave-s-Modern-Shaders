@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =======================================
-# Dave's Modern Shaders v1.1
+# Dave's Modern Shaders v1.1.1
 # by djparent
 # =======================================
 
@@ -245,6 +245,18 @@ pgrep -f osk.py | xargs kill -9
 printf "\033[H\033[2J" > "$CURR_TTY"
 printf "$T_STARTING" > "$CURR_TTY"
 sleep 0.5
+
+# ==============================================
+# Aspect Ratio set to Core provided
+# ==============================================
+set_ar() {
+grep -q '^aspect_ratio_index =' /home/ark/.config/retroarch/retroarch.cfg && \
+sed -i 's/^aspect_ratio_index = .*/aspect_ratio_index = "22"/' /home/ark/.config/retroarch/retroarch.cfg || \
+echo 'aspect_ratio_index = "22"' >> /home/ark/.config/retroarch/retroarch.cfg
+grep -q '^aspect_ratio_index =' /home/ark/.config/retroarch32/retroarch.cfg && \
+sed -i 's/^aspect_ratio_index = .*/aspect_ratio_index = "22"/' /home/ark/.config/retroarch32/retroarch.cfg || \
+echo 'aspect_ratio_index = "22"' >> /home/ark/.config/retroarch32/retroarch.cfg
+}
 
 # ==============================================
 # Config File Creation
@@ -681,6 +693,7 @@ apply_all() {
 	create_pcenginecdglslp
 	create_neogeoglslp
 	create_neogeocdglslp
+	set_ar
 	
 	dialog --backtitle "$T_BACKTITLE" --title "$T_APPLY_ALL" --msgbox "\n $T_APPLIED" 7 40 > "$CURR_TTY"
 }
@@ -762,6 +775,8 @@ handheld_apply_menu() {
 		fi
 	done
 
+	[[ -n "$CHOICES" ]] && set_ar
+	
 	dialog --backtitle "$T_BACKTITLE" --title "$T_HHTITLE" --msgbox "\n $T_APPLIED" 7 40 > "$CURR_TTY"
 }
 
@@ -866,7 +881,9 @@ console_apply_menu() {
 			esac
 		fi
 	done		
-
+	
+	[[ -n "$CHOICES" ]] && set_ar
+	
 	dialog --backtitle "$T_BACKTITLE" --title "$T_CONTITLE" --msgbox "\n $T_APPLIED" 7 40 > "$CURR_TTY"
 }
 
