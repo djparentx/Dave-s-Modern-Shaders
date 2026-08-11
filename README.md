@@ -1,8 +1,8 @@
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/O8Z424G15Y)
-
 # Dave's Modern Shaders (R36S)
 
 A RetroArch shader management tool for the R36S, designed for ArkOS and dArkOS, providing a clean, controller-friendly way to apply modern shader presets with improved scaling, smoothing, and color output.
+
+[<img width="300" height="150" alt="ChatGPT Image Aug 11, 2026, 10_52_38 AM" src="https://github.com/user-attachments/assets/8680b713-26ad-4d3a-90ea-da1b27a0fe93" />](https://ko-fi.com/O8Z424G15Y)
 
 ---
 
