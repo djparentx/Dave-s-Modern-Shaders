@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # =======================================
-# Dave's Modern Shaders v1.2
+# Dave's Modern Shaders v1.3
 # by djparent
 # =======================================
+VERSION="1.3"
 
 # Copyright (c) 2026 djparent
 #
@@ -39,7 +40,8 @@ export TERM=linux
 GPTOKEYB_PID=""
 CURR_TTY="/dev/tty1"
 TMP_KEYS="/tmp/keys.gptk.$$"
-FLAG="/home/ark/.modernshaders_installed"
+FLAG="/home/ark/.modernshaders_v131_installed"
+OLD_FLAG="/home/ark/.modernshaders_v13_installed"
 B_FLAG="/home/ark/.modern_bezel_yes"
 SHADERPATH="/home/ark/.config/retroarch/shaders"
 CONFIGPATH="/home/ark/.config/retroarch/config"
@@ -78,6 +80,7 @@ T_BEZEL_ON="Turn Bezels On"
 T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Bezels"
+T_NOTHING="Nothing was selected."
 
 # --- FRANÇAIS (FR) --- 
 if [[ "$SYSTEM_LANG" == *"fr"* ]]; then
@@ -105,6 +108,7 @@ T_BEZEL_ON="Activer les bordures"
 T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Bordures"
+T_NOTHING="Rien n a ete selectionne."
 
 # --- ESPAÑOL (ES) ---
 elif [[ "$SYSTEM_LANG" == *"es"* ]]; then
@@ -132,6 +136,7 @@ T_BEZEL_ON="Activar marcos"
 T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Marcos"
+T_NOTHING="No se selecciono nada."
 
 # --- PORTUGUÊS (PT) ---
 elif [[ "$SYSTEM_LANG" == *"pt"* ]]; then
@@ -159,6 +164,7 @@ T_BEZEL_ON="Ativar molduras"
 T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Molduras"
+T_NOTHING="Nada foi selecionado."
 
 # --- ITALIANO (IT) ---
 elif [[ "$SYSTEM_LANG" == *"it"* ]]; then
@@ -186,6 +192,7 @@ T_BEZEL_ON="Attiva cornici"
 T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Cornici"
+T_NOTHING="Nessuna selezione effettuata."
 
 # --- DEUTSCH (DE) ---
 elif [[ "$SYSTEM_LANG" == *"de"* ]]; then
@@ -213,6 +220,7 @@ T_BEZEL_ON="Bezel aktivieren"
 T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Bezel"
+T_NOTHING="Nichts wurde ausgewaehlt."
 
 # --- POLSKI (PL) ---
 elif [[ "$SYSTEM_LANG" == *"pl"* ]]; then
@@ -240,6 +248,7 @@ T_BEZEL_ON="Wlacz ramki"
 T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Ramki"
+T_NOTHING="Nic nie zostalo wybrane."
 fi
 
 # ============================================================
@@ -297,6 +306,8 @@ exit_menu() {
 
     exit 0
 }
+
+
 
 # ==============================================
 # Set important RetroArch Settings
@@ -555,6 +566,9 @@ mkdir -p $CONFIGPATH/Genesis\ Plus\ GX
 	cat > $CONFIGPATH/Genesis\ Plus\ GX/megadrive.glslp << 'EOF'
 #reference "../../shaders/modern-ntsc.glslp"
 EOF
+	cat > $CONFIGPATH/Genesis\ Plus\ GX/genesis.glslp << 'EOF'
+#reference "../../shaders/modern-ntsc.glslp"
+EOF
 
 chown -R ark:ark $CONFIGPATH/Genesis\ Plus\ GX
 }
@@ -709,6 +723,7 @@ rm -f $CONFIGPATH/Genesis\ Plus\ GX/mastersystem.glslp
 delete_mdglslp() {
 # --- Delete Mega Drive shader config file ---
 rm -f $CONFIGPATH/Genesis\ Plus\ GX/megadrive.glslp
+rm -f $CONFIGPATH/Genesis\ Plus\ GX/genesis.glslp
 }
 
 delete_segacdglslp() {
@@ -839,7 +854,11 @@ handheld_remove_menu() {
 		fi
 	done
 	
-	dialog --backtitle "$T_BACKTITLE" --title "$T_HHTITLE" --msgbox "\n $T_REMOVED" 7 40 > "$CURR_TTY"
+	if [[ -z "$CHOICES" ]]; then
+		dialog --backtitle "$T_BACKTITLE" --title "$T_CONTITLE" --msgbox "\n $T_NOTHING" 7 40 > "$CURR_TTY"
+	else
+		dialog --backtitle "$T_BACKTITLE" --title "$T_CONTITLE" --msgbox "\n $T_REMOVED" 7 40 > "$CURR_TTY"
+	fi
 }
 
 # ============================================================
@@ -881,7 +900,11 @@ handheld_apply_menu() {
 
 	[[ -n "$CHOICES" ]] && set_ra
 	
-	dialog --backtitle "$T_BACKTITLE" --title "$T_HHTITLE" --msgbox "\n $T_APPLIED" 7 40 > "$CURR_TTY"
+	if [[ -z "$CHOICES" ]]; then
+		dialog --backtitle "$T_BACKTITLE" --title "$T_CONTITLE" --msgbox "\n $T_NOTHING" 7 40 > "$CURR_TTY"
+	else
+		dialog --backtitle "$T_BACKTITLE" --title "$T_CONTITLE" --msgbox "\n $T_APPLIED" 7 40 > "$CURR_TTY"
+	fi
 }
 
 
@@ -934,7 +957,11 @@ console_remove_menu() {
 		fi
 	done
 
-	dialog --backtitle "$T_BACKTITLE" --title "$T_CONTITLE" --msgbox "\n $T_REMOVED" 7 40 > "$CURR_TTY"
+	if [[ -z "$CHOICES" ]]; then
+		dialog --backtitle "$T_BACKTITLE" --title "$T_CONTITLE" --msgbox "\n $T_NOTHING" 7 40 > "$CURR_TTY"
+	else
+		dialog --backtitle "$T_BACKTITLE" --title "$T_CONTITLE" --msgbox "\n $T_REMOVED" 7 40 > "$CURR_TTY"
+	fi
 }
 
 # ============================================================
@@ -988,7 +1015,11 @@ console_apply_menu() {
 	
 	[[ -n "$CHOICES" ]] && set_ra
 	
-	dialog --backtitle "$T_BACKTITLE" --title "$T_CONTITLE" --msgbox "\n $T_APPLIED" 7 40 > "$CURR_TTY"
+	if [[ -z "$CHOICES" ]]; then
+		dialog --backtitle "$T_BACKTITLE" --title "$T_CONTITLE" --msgbox "\n $T_NOTHING" 7 40 > "$CURR_TTY"
+	else
+		dialog --backtitle "$T_BACKTITLE" --title "$T_CONTITLE" --msgbox "\n $T_APPLIED" 7 40 > "$CURR_TTY"
+	fi
 }
 
 # ============================================================
@@ -1296,6 +1327,7 @@ dialog --clear
 trap exit_menu EXIT
 
 rm -f "/home/ark/.modern_shaders"
+rm -f "$OLD_FLAG"
 [[ ! -f "$FLAG" ]] && create_files
 
 main_menu
