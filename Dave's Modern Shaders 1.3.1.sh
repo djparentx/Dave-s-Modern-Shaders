@@ -349,9 +349,6 @@ Change_Log() {
 		--msgbox "\n\
       \Z4https://github.com/djparentx\Zn\n\
           --------------------\n\
-   ◦ fixed PC Engine aspect ratio\n\
-   ◦ fixed PSX settings not applying\n\
-   ◦ fixed bezels not being removed\n\
    ◦ added self-updating!\n\
  	" \
 		14 45 > "$CURR_TTY"
