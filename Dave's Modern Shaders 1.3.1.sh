@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # =======================================
-# Dave's Modern Shaders v1.3
+# Dave's Modern Shaders v1.3.1
 # by djparent
 # =======================================
-VERSION="1.3"
+VERSION="1.3.1"
 
 # Copyright (c) 2026 djparent
 #
@@ -81,6 +81,8 @@ T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Bezels"
 T_NOTHING="Nothing was selected."
+T_UPDATE_AVAILABLE="Update Available"
+T_DOWNLOAD="Download Update Now?"
 
 # --- FRANÇAIS (FR) --- 
 if [[ "$SYSTEM_LANG" == *"fr"* ]]; then
@@ -109,6 +111,8 @@ T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Bordures"
 T_NOTHING="Rien n a ete selectionne."
+T_UPDATE_AVAILABLE="Mise a jour disponible"
+T_DOWNLOAD="Telecharger la mise a jour maintenant ?"
 
 # --- ESPAÑOL (ES) ---
 elif [[ "$SYSTEM_LANG" == *"es"* ]]; then
@@ -137,6 +141,8 @@ T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Marcos"
 T_NOTHING="No se selecciono nada."
+T_UPDATE_AVAILABLE="Actualizacion disponible"
+T_DOWNLOAD="Descargar actualizacion ahora?"
 
 # --- PORTUGUÊS (PT) ---
 elif [[ "$SYSTEM_LANG" == *"pt"* ]]; then
@@ -165,6 +171,8 @@ T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Molduras"
 T_NOTHING="Nada foi selecionado."
+T_UPDATE_AVAILABLE="Atualizacao disponivel"
+T_DOWNLOAD="Baixar atualizacao agora?"
 
 # --- ITALIANO (IT) ---
 elif [[ "$SYSTEM_LANG" == *"it"* ]]; then
@@ -193,6 +201,8 @@ T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Cornici"
 T_NOTHING="Nessuna selezione effettuata."
+T_UPDATE_AVAILABLE="Aggiornamento disponibile"
+T_DOWNLOAD="Scaricare aggiornamento ora?"
 
 # --- DEUTSCH (DE) ---
 elif [[ "$SYSTEM_LANG" == *"de"* ]]; then
@@ -221,6 +231,8 @@ T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Bezel"
 T_NOTHING="Nichts wurde ausgewaehlt."
+T_UPDATE_AVAILABLE="Update verfuegbar"
+T_DOWNLOAD="Update jetzt herunterladen?"
 
 # --- POLSKI (PL) ---
 elif [[ "$SYSTEM_LANG" == *"pl"* ]]; then
@@ -249,6 +261,8 @@ T_ON="ON"
 T_OFF="OFF"
 T_BEZELS="Ramki"
 T_NOTHING="Nic nie zostalo wybrane."
+T_UPDATE_AVAILABLE="Dostepna aktualizacja"
+T_DOWNLOAD="Pobrac aktualizacje teraz?"
 fi
 
 # ============================================================
@@ -290,6 +304,62 @@ pgrep -f osk.py | xargs kill -9
 printf "\033[H\033[2J" > "$CURR_TTY"
 printf "$T_STARTING" > "$CURR_TTY"
 sleep 0.5
+
+# ============================================================
+# Check for Updates
+# ============================================================
+Self_Update() {
+    local repo="djparentx/Dave-s-Modern-Shaders"
+    local latest url
+
+    read -r latest url < <(curl -s https://api.github.com/repos/${repo}/releases/latest \
+    | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['tag_name'].lstrip('v'), d['assets'][0]['browser_download_url'])")
+
+    [[ -z "$latest" ]] && return  # no internet / API fail, skip silently
+
+    [[ "$latest" == "$VERSION" ]] && return
+	dialog \
+		--clear \
+		--backtitle "$T_BACKTITLE" \
+		--title "$latest $T_UPDATE_AVAILABLE" \
+		--yesno "\n  $T_DOWNLOAD" \
+		7 45 > "$CURR_TTY" 2>&1
+			
+	if [[ $? != 0 ]]; then
+		return
+	fi
+	
+	touch /home/ark/.modernshaders_show_changelog
+	local new_path="${0%/*}/Dave's Modern Shaders ${latest}.sh"
+	curl -L "$url" -o "$new_path" && chmod +x "$new_path"
+	[[ "$0" != "$new_path" ]] && rm -f "$0"
+	exec "$new_path"
+}
+
+# ============================================================
+# Change Log
+# ============================================================
+Change_Log() {
+	dialog \
+		--backtitle "$T_BACKTITLE" \
+		--title "Dave's Modern Shaders v${VERSION} Change Log" \
+		--clear \
+		--colors \
+		--no-collapse \
+		--msgbox "\n\
+      \Z4https://github.com/djparentx\Zn\n\
+          --------------------\n\
+   ◦ fixed PC Engine aspect ratio\n\
+   ◦ fixed PSX settings not applying\n\
+   ◦ fixed bezels not being removed\n\
+   ◦ added self-updating!\n\
+ 	" \
+		14 45 > "$CURR_TTY"
+		
+	[ $? -ne 0 ] && return
+	
+	rm -f /home/ark/.modernshaders_show_changelog
+}
 
 # ============================================================
 # Exit the script
@@ -1329,6 +1399,10 @@ trap exit_menu EXIT
 rm -f "/home/ark/.modern_shaders"
 rm -f "$OLD_FLAG"
 [[ ! -f "$FLAG" ]] && create_files
+
+Self_Update
+
+[[ -f "/home/ark/.modernshaders_show_changelog" ]] && Change_Log
 
 main_menu
 
